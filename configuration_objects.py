@@ -8,11 +8,12 @@ point types:
 1 = a point
 2 = b point
 3 = s point
-4 = c point
+4 = c point (corners)
 '''
 import random
 
 
+#objects that stores an arrangement of points in square and the lines connecting them
 class configuration():
     def __init__(self, n):
         self.n = n
@@ -20,12 +21,13 @@ class configuration():
         self.a_points = []
         self.b_points = []
         self.c_points = []
-        self.points_on_sides = [[], [], [], []]
+        self.points_on_sides = [[], [], [], []] #stores s points by the side they lie on
         for i in range(4):  # creates 4 corner points for every configuration
             self.c_points.append(c_point(i))
         self.lines = []
 
     def add_a_point(self, line):
+        #pass line object which is the line the a point is free to move on
         self.a_points.append(a_point(line))
 
     def add_b_point(self):
@@ -40,6 +42,7 @@ class configuration():
     def add_line(self, start_point, end_point):
         self.lines.append(line(start_point, end_point))
 
+    #creates a exact duplicate configuration and returns it
     def duplicate(self):
         dupe = configuration(self.n)
         for s_point in self.s_points:
@@ -77,6 +80,7 @@ class configuration():
 
         return None
 
+    #evenly adjusts a points for visual clarity, some bugs
     def adjust_a_points(self):
         points_on_lines = []
         for line in self.lines:
@@ -116,6 +120,8 @@ class configuration():
         for a_point in objects_to_delete[1]:
             self.a_points.remove(a_point)
 
+
+    #returns point object that lies at some coordinates
     def find_point_at_coord(self, x, y):
         if (x == 0 or y == 0 or x == 1 or y == 1):
             for corner in self.c_points:
@@ -134,6 +140,7 @@ class configuration():
                 return b_point
 
 
+#object class for corner points
 class c_point():
     def __init__(self, corner):
         self.corner = corner
@@ -152,6 +159,7 @@ class c_point():
             self.x = 0
             self.y = 0
 
+    #redefines = operation to look at coordinates
     def __eq__(self, point2):
         if (isinstance(point2, c_point)):
             if (point2.x == self.x and point2.y == self.y):
@@ -159,6 +167,7 @@ class c_point():
         return False
 
 
+#object class for s points
 class s_point():
     def __init__(self, side):
         self.side = side
@@ -176,6 +185,7 @@ class s_point():
             else:
                 self.x = 1
 
+    #redefines = operation to look at coordinates
     def __eq__(self, point2):
         if (isinstance(point2, s_point)):
             if (point2.x == self.x and point2.y == self.y):
@@ -183,7 +193,7 @@ class s_point():
         return False
 
 
-# can probably clean this up at some point
+#object class for a points
 class a_point():
     def __init__(self, line):
         self.line = line
@@ -192,6 +202,7 @@ class a_point():
 
         self.place_coordinates(random.random())
 
+    #chooses coordinates along constraining line
     def place_coordinates(self, param):
         if (min(self.line.start.x, self.line.end.x) == self.line.start.x):
             left_point = self.line.start
@@ -214,6 +225,7 @@ class a_point():
             self.y = abs((y_length / 2)) + \
                 min(left_point.y, right_point.y)
 
+    #redefines = operation to look at coordinates
     def __eq__(self, point2):
         if (isinstance(point2, a_point)):
             if (point2.x == self.x and point2.y == self.y):
@@ -221,12 +233,14 @@ class a_point():
         return False
 
 
+#object class for b points
 class b_point():
     def __init__(self):
         self.type = 2
         self.x = random.random()
         self.y = random.random()
 
+    #redefines = operation to look at coordinates
     def __eq__(self, point2):
         if (isinstance(point2, b_point)):
             if (point2.x == self.x and point2.y == self.y):
@@ -234,12 +248,14 @@ class b_point():
         return False
 
 
+#object class for lines
 class line():
     def __init__(self, start_point, end_point):
         self.start = start_point
         self.end = end_point
         self.a_points = []
 
+    #redefines = operation to be based on start and end points of lines
     def __eq__(self, line2):
         if isinstance(line2, line):
             A = self.start
@@ -261,6 +277,7 @@ class s_point_case():
         self.side4 = side4
 
 
+#deletes the points that rely on a line
 def delete_dependant_points(config, line, objects_to_delete):
     if (len(config.a_points) != 0):
         points_on_line = []
@@ -296,6 +313,7 @@ def get_x(e):
     return e.x
 
 
+#finds a points that are dependant on lines
 def find_a_dependency(line, k):
     if (line.start.type == 1):  # is a point
         return find_a_dependency(line.start.line, k + 1)
@@ -303,5 +321,3 @@ def find_a_dependency(line, k):
         return find_a_dependency(line.end, k + 1)
 
     return k
-
-# adjustment of a points is still broken

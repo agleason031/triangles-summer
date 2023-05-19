@@ -5,6 +5,7 @@ display module to graphically show configurations
 from tkinter import *
 
 
+#window class
 class Window(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -12,6 +13,7 @@ class Window(Frame):
         self.master.title("Display")
 
 
+#displays specific configuration in window
 def show_config(configuration):
     root = Tk()
     win = Window(root)

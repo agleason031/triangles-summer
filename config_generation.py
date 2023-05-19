@@ -4,6 +4,7 @@ from itertools import combinations
 import display as disp
 
 
+#creates all the configurations for a passed case
 def create_configs(case):
     current_configs = [obj.configuration(case.n)]
     if (case.s > 0):
@@ -32,6 +33,7 @@ def create_configs(case):
                 new_configs.append(temp)
         current_configs = remove_duplicate_configs(new_configs)
 
+    #placing b points
     if (case.b > 0):
         current_configs = place_b_points(case.b, current_configs, case.n, case)
         current_configs = remove_duplicate_configs(current_configs)
@@ -39,6 +41,7 @@ def create_configs(case):
     return current_configs
 
 
+#places s points in all possible ways for given number of s points
 def place_s_points(s_num, config):
     new_configs = []
 
@@ -160,6 +163,8 @@ def place_s_points(s_num, config):
     return new_configs
 
 
+#places a points in all possible ways based on lines already created from s points
+#doesn't create a point loops
 def place_a_points(a_num, config):
     point_configs = []
     for i in range(len(config.lines)):
@@ -208,6 +213,7 @@ def place_a_points(a_num, config):
     return new_configs
 
 
+#creates all possible configurations with b points
 def place_b_points(b_num, configs, n, case):
     new_configs = []
 
@@ -275,6 +281,7 @@ def place_b_points(b_num, configs, n, case):
     return new_configs
 
 
+#finds all the triangles in a configuration
 def get_triangles(config, n):
     triangles = []
 
@@ -289,11 +296,7 @@ def get_triangles(config, n):
 
 
 # walks around edge to generate triangles, keep in mind wraparound issues for later
-'''
-doesn't work for triangles that don't lie on the edge
-'''
-
-
+#doesn't work for triangles that don't lie on the edge
 def walk_edge(start_point, config):
     triangle = []
     last_side_point = None
@@ -367,6 +370,7 @@ def walk_edge(start_point, config):
     return triangle, last_side_point
 
 
+#finds last line to finish triangle
 def find_finishing_line(config, triangle, start_line):
     # find 3rd point by finding connecting lines
     for line in config.lines:
@@ -422,6 +426,7 @@ def find_finishing_line(config, triangle, start_line):
     return triangle
 
 
+#places all possible lines just involving s points and corners
 def place_s_lines(current_configs):
     for config in current_configs:
         # drawing all lines to corners
@@ -431,7 +436,7 @@ def place_s_lines(current_configs):
                 if (corner.x != config.s_points[i].x and corner.y != config.s_points[i].y):
                     config.add_line(corner, config.s_points[i])
 
-        # always drawns one diagonal
+        # always draws one diagonal
         config.add_line(config.c_points[0], config.c_points[2])
 
         # only drawns second diagonal if there is no reflectional symmetry over vertical line
@@ -456,6 +461,7 @@ def place_s_lines(current_configs):
     return current_configs
 
 
+#removes intersections by generating new configurations each with a line removed
 def remove_intersection(config, s):
     new_configs = []
 
@@ -481,7 +487,6 @@ def remove_intersection(config, s):
         new_configs.append(config)
     else:
         new_configs = delete_simple_cases(new_configs, s)
-        # possibly remove duplicates
 
         even_newer_configs = []
         for config in new_configs:
@@ -632,11 +637,14 @@ def same_line_exists(config, line):
     return False
 
 
+#checks which side of line ab c is on
 def ccw(A, B, C):
     return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
 
 
-def intersect(line1, line2):  # not sure how this deals with colineararity
+#determines if a line intersects with another line
+#having the same starting or ending point does not count as an intersection since that is allowed in the final configuration
+def intersect(line1, line2):
     A = line1.start
     B = line1.end
     C = line2.start
@@ -665,10 +673,13 @@ def intersect(line1, line2):  # not sure how this deals with colineararity
     return temp
 
 
+#deprecated, checks if points are equivalent
 def is_same_point(A, B):
     return (A.x == B.x and A.y == B.y)
 
 
+#generates all binary strings of n bits
+#used for remove intersections v2
 def gen_binary_strings(n, arr, i, config_cases):
     if (i == n):                    # depth reached
         new_entry = []
@@ -682,98 +693,3 @@ def gen_binary_strings(n, arr, i, config_cases):
 
     arr[i] = 1
     gen_binary_strings(n, arr, i+1, config_cases)
-
-
-'''
-def check_reflectional_symmetry(config1, config2):
-    # add vertical and horizontal symmtry later, this is just structural right now
-    return diagonal_symmetry(config1, config2)
-'''
-
-
-'''
-def diagonal_symmetry(config1, config2):
-    # config reflected over bottom left top right diagonal
-    diagonal1 = obj.configuration(config1.n)
-    diagonal1_points = {}
-    # config reflected over top left bottom right diagonal
-    diagonal2 = obj.configuration(config1.n)
-    diagonal2_points = {}
-    for s_point in config1.s_points:
-        match (s_point.side):
-            case 1:
-                diagonal1.add_s_point(4)
-                diagonal1.s_points[len(
-                    diagonal1.s_points) - 1].y = 1 - s_point.x
-                diagonal2.add_s_point(2)
-                diagonal2.s_points[len(
-                    diagonal2.s_points) - 1].y = s_point.x
-            case 2:
-                diagonal1.add_s_point(3)
-                diagonal1.s_points[len(
-                    diagonal1.s_points) - 1].x = 1 - s_point.y
-                diagonal2.add_s_point(1)
-                diagonal2.s_points[len(
-                    diagonal2.s_points) - 1].x = s_point.y
-            case 3:
-                diagonal1.add_s_point(2)
-                diagonal1.s_points[len(
-                    diagonal1.s_points) - 1].y = 1 - s_point.x
-                diagonal2.add_s_point(4)
-                diagonal2.s_points[len(
-                    diagonal2.s_points) - 1].y = s_point.x
-            case 4:
-                diagonal1.add_s_point(1)
-                diagonal1.s_points[len(
-                    diagonal1.s_points) - 1].x = 1 - s_point.y
-                diagonal2.add_s_point(3)
-                diagonal2.s_points[len(
-                    diagonal2.s_points) - 1].y = s_point.x
-
-        diagonal1_points[s_point] = diagonal1.s_points[len(
-            diagonal1.s_points) - 1]
-        diagonal2_points[s_point] = diagonal1.s_points[len(
-            diagonal2.s_points) - 1]
-
-    for corner in config1.c_points:  # add corners to dicts
-        match (corner.corner):
-            case 0:
-                diagonal1_points[corner] = diagonal1.c_points[0]
-                diagonal2_points[corner] = diagonal2.c_points[2]
-            case 1:
-                diagonal1_points[corner] = diagonal1.c_points[3]
-                diagonal2_points[corner] = diagonal2.c_points[1]
-            case 2:
-                diagonal1_points[corner] = diagonal1.c_points[2]
-                diagonal2_points[corner] = diagonal2.c_points[0]
-            case 3:
-                diagonal1_points[corner] = diagonal1.c_points[1]
-                diagonal2_points[corner] = diagonal2.c_points[3]
-
-    for a_point in config1.a_points:
-        diagonal1.add_a_point(a_point.line)
-        diagonal1.a_points[len(diagonal1.a_points) - 1].x = a_point.x
-        diagonal1.a_points[len(diagonal1.a_points) - 1].y = a_point.y
-        diagonal1_points[a_point] = diagonal1.a_points[len(
-            diagonal1.a_points) - 1]
-
-        diagonal2.add_a_point(a_point.line)
-        diagonal2.a_points[len(diagonal2.a_points) - 1].x = a_point.x
-        diagonal2.a_points[len(diagonal2.a_points) - 1].y = a_point.y
-        diagonal1_points[a_point] = diagonal2.a_points[len(
-            diagonal2.a_points) - 1]
-
-    for line in config1.lines:
-        diagonal1.add_line(
-            diagonal1_points[line.start], diagonal1_points[line.end])
-        diagonal2.add_line(
-            diagonal2_points[line.start], diagonal2_points[line.start])
-
-    if (compare(config2, diagonal1) or compare(config2, diagonal2)):
-        return True
-    else:
-        return False
-'''
-
-# write function for each possible transformation that keeps identical
-# fix a_point cheat in diagonal reflections

@@ -18,6 +18,7 @@ def export(configs):
     print("\\end{tikzpicture}")
 
 
+#generates tikz code for drawing a specific configuration
 def draw_single_config(config, x, y):
     print("\\draw (" + str(x) + ", " + str(y) +
           ") rectangle (" + str(x + 2) + ", " + str(y + 2) + ");")

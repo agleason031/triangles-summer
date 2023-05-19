@@ -1,6 +1,7 @@
 import math
 
 
+# solution object for storing valid solutions to the equation
 class solution:
     def __init__(self, n, a, b, s):
         self.n = n
@@ -9,6 +10,7 @@ class solution:
         self.s = s
 
 
+#returns all solutions for a given n
 def case_solver(n):
     solution_set = []
     for a in range(n):
@@ -20,6 +22,7 @@ def case_solver(n):
     return solution_set
 
 
+#prints all solutions, mainly for testing purposes
 def print_solutions(solution_set):
     print("Listed in form (a, b, s)")
     for i in solution_set:
@@ -27,6 +30,7 @@ def print_solutions(solution_set):
         print(string)
 
 
+#checks if values of a b and s satisfy equation
 def check_working_solution(n, a, b, s):
     if (n == (a + (2 * b) + s) + 2):
         return True
@@ -34,13 +38,16 @@ def check_working_solution(n, a, b, s):
         return False
 
 
+#solves for a value
 def a_solver(n, b, s):
     return(n - s - (2 * b) - 2)
 
 
+#solves for s value
 def s_solver(n, a, b):
     return(n - a - (2 * b) - 2)
 
 
+#solves for b value
 def b_solver(n, a, s):
     return(math.floor((n - s - a - 2)/2))
