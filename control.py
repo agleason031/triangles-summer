@@ -17,7 +17,7 @@ for i in configs:
 '''
 
 # independent case testing
-case1 = gen.solution(5, 1, 1, 0)
+case1 = gen.solution(5, 1, 0, 2)
 
 configs = conf.create_configs(case1)
 
@@ -25,19 +25,18 @@ print(len(configs))
 for config in configs:
     # config.adjust_a_points()
     display.show_config(config)
-export.export(configs)
+#export.export(configs)
 
 '''
 arrange1 = obj.configuration(4)
-arrange1.add_s_point(1)
-arrange1.adjust_s_points()
 arrange1.add_line(arrange1.c_points[0], arrange1.c_points[2])
-arrange1.add_line(arrange1.c_points[2], arrange1.s_points[0])
-arrange1.add_a_point(arrange1.lines[1])
+arrange1.add_a_point(arrange1.lines[0])
 arrange1.add_line(arrange1.a_points[0], arrange1.c_points[0])
-arrange1.add_line(arrange1.a_points[0], arrange1.c_points[3])
+arrange1.add_line(arrange1.a_points[0], arrange1.c_points[1])
 
+print(len(arrange1.lines))
 configs = conf.remove_intersection(arrange1, 1)
+print(len(arrange1.lines))
 
 print(len(configs))
 for config in configs:

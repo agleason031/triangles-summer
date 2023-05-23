@@ -179,9 +179,15 @@ def place_a_points(a_num, config):
         for corner in config.c_points:  # possible c points are corners where line the a point is on does not end
             if (is_same_point(a_point.line.start, corner) == False and is_same_point(a_point.line.end, corner) == False):
                 possible_end_points.append(corner)
+        #a points to s points
         for s_point in config.s_points:
             if (is_same_point(a_point.line.start, s_point) == False and is_same_point(a_point.line.end, s_point) == False):
                 possible_end_points.append(s_point)
+        #a points to a points
+        for target_a_point in config.a_points:
+            if (not(target_a_point is a_point)): #only check when target is not the same point as starting point
+                if (target_a_point.line != a_point.line and is_same_point(a_point.line.start, target_a_point) == False and is_same_point(a_point.line.end, target_a_point) == False): #points are not colinear
+                    possible_end_points.append(target_a_point)
 
         # separates possible points based on which side of the line they are on
         same_side = []

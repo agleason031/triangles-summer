@@ -107,6 +107,7 @@ class configuration():
 
     # deletes points and lines depending on a line as well as the lines
     def delete_line(self, line):  # line is passed as index
+        backup = self.duplicate()
         objects_to_delete = [
             [], []]  # first list is a points, second is lines; lines are indexs, points are objects
         objects_to_delete = delete_dependant_points(
