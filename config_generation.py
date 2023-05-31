@@ -187,7 +187,18 @@ def place_a_points(a_num, config):
         for target_a_point in config.a_points:
             if (not(target_a_point is a_point)): #only check when target is not the same point as starting point
                 if (target_a_point.line != a_point.line and is_same_point(a_point.line.start, target_a_point) == False and is_same_point(a_point.line.end, target_a_point) == False): #points are not colinear
-                    possible_end_points.append(target_a_point)
+                    #checks if a line comes off target a point on other side of line
+                    #if that is the case then a b point would be created and the target is not valid
+                    valid = True
+                    for line in config.lines:
+                        if (line.start == target_a_point): #line starts on target
+                            if (ccw(target_a_point.line.start, target_a_point.line.end, line.end) != ccw(target_a_point.line.start, target_a_point.line.end, a_point)):
+                                valid = False
+                        if (line.end == target_a_point): #line ends on target
+                            if (ccw(target_a_point.line.start, target_a_point.line.end, line.start) != ccw(target_a_point.line.start, target_a_point.line.end, a_point)):
+                                valid = False
+                    if (valid == True):
+                        possible_end_points.append(target_a_point)
 
         # separates possible points based on which side of the line they are on
         same_side = []

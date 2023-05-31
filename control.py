@@ -17,15 +17,15 @@ for i in configs:
 '''
 
 # independent case testing
-case1 = gen.solution(5, 1, 0, 2)
+case1 = gen.solution(5, 3, 0, 0)
 
 configs = conf.create_configs(case1)
 
 print(len(configs))
 for config in configs:
-    # config.adjust_a_points()
+    config.adjust_a_points()
     display.show_config(config)
-#export.export(configs)
+export.export(configs)
 
 '''
 arrange1 = obj.configuration(4)

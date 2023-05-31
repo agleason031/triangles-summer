@@ -109,11 +109,12 @@ class configuration():
     def delete_line(self, line):  # line is passed as index
         backup = self.duplicate()
         objects_to_delete = [
-            [], []]  # first list is a points, second is lines; lines are indexs, points are objects
+            [], []]  # first list is lines, second is a points; lines are indexs, points are objects
         objects_to_delete = delete_dependant_points(
             self, line, objects_to_delete)
 
-        objects_to_delete[0].append(line)
+        if (objects_to_delete[0].count(line) == 0):
+            objects_to_delete[0].append(line)
         objects_to_delete[0].sort(reverse=True)
 
         for line in objects_to_delete[0]:
@@ -286,13 +287,14 @@ def delete_dependant_points(config, line, objects_to_delete):
             if (a_point.line == config.lines[line]):
                 points_on_line.append(a_point)
 
+        #adding lines
         for i in range(len(config.lines)):
             if (config.lines[i].start.type == 1):
-                if (points_on_line.count(config.lines[i].start) > 0):
+                if (points_on_line.count(config.lines[i].start) > 0 and objects_to_delete[0].count(i) == 0):
                     delete_dependant_points(config, i, objects_to_delete)
                     objects_to_delete[0].append(i)
             if (config.lines[i].end.type == 1):
-                if (points_on_line.count(config.lines[i].end) > 0):
+                if (points_on_line.count(config.lines[i].end) > 0 and objects_to_delete[0].count(i) == 0):
                     delete_dependant_points(config, i, objects_to_delete)
                     objects_to_delete[0].append(i)
 
