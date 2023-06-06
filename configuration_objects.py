@@ -107,7 +107,6 @@ class configuration():
 
     # deletes points and lines depending on a line as well as the lines
     def delete_line(self, line):  # line is passed as index
-        backup = self.duplicate()
         objects_to_delete = [
             [], []]  # first list is lines, second is a points; lines are indexs, points are objects
         objects_to_delete = delete_dependant_points(
@@ -202,30 +201,7 @@ class a_point():
         line.a_points.append(self)
         self.type = 1
 
-        self.place_coordinates(random.random())
-
-    #chooses coordinates along constraining line
-    def place_coordinates(self, param):
-        if (min(self.line.start.x, self.line.end.x) == self.line.start.x):
-            left_point = self.line.start
-            right_point = self.line.end
-        else:
-            left_point = self.line.end
-            right_point = self.line.start
-        x_length = right_point.x - left_point.x
-        y_length = right_point.y - left_point.y
-
-        self.x = (param * x_length) + left_point.x
-        if (x_length != 0):
-            slope = y_length / x_length
-            temp = (self.x - min(self.line.start.x, self.line.end.x)) * slope
-            if (slope < 0):
-                self.y = max(self.line.start.y, self.line.end.y) - abs(temp)
-            else:
-                self.y = min(self.line.start.y, self.line.end.y) + abs(temp)
-        else:  # vertical line
-            self.y = abs((y_length / 2)) + \
-                min(left_point.y, right_point.y)
+        self.x, self.y = line.equation.get_value(random.random())
 
     #redefines = operation to look at coordinates
     def __eq__(self, point2):
@@ -256,6 +232,7 @@ class line():
         self.start = start_point
         self.end = end_point
         self.a_points = []
+        self.equation = line_equation(start_point, end_point)
 
     #redefines = operation to be based on start and end points of lines
     def __eq__(self, line2):
@@ -269,6 +246,21 @@ class line():
 
         return False
 
+
+#object for line equations, can input value to get output value
+class line_equation():
+    def __init__(self, start_point, end_point):
+        self.x1 = start_point.x
+        self.x2 = end_point.x
+        self.y1 = start_point.y
+        self.y2 = end_point.y
+
+    #t should be bounded between 0 and 1
+    def get_value(self, t):
+        x = ((self.x2 - self.x1) * t) + self.x1
+        y = 1 - (((1-self.y2) - (1-self.y1)) * t) - (1-self.y1)
+
+        return (x, y)
 
 # object for storing num of s points on each side
 class s_point_case():
