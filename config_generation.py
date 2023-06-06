@@ -157,8 +157,10 @@ def place_s_points(s_num, config):
             for i in range(case.side4):
                 new_configs[len(new_configs) - 1].add_s_point(4)
 
+    '''
     for config in new_configs:
         config.adjust_s_points()
+    '''
 
     return new_configs
 

@@ -17,7 +17,7 @@ for i in configs:
 '''
 
 # independent case testing
-case1 = gen.solution(5, 1, 1, 0)
+case1 = gen.solution(4, 0, 0, 2)
 
 configs = conf.create_configs(case1)
 

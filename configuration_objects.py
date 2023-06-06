@@ -173,15 +173,18 @@ class s_point():
     def __init__(self, side):
         self.side = side
         self.type = 3
-        if (side == 1 or side == 3):  # generates random coordinates along side for line, coords are given from 0 to 1 starting from top left
-            self.x = random.random()
-            if (side == 3):
+        self.set_coords(random.random())
+
+    def set_coords(self, param):
+        if (self.side == 1 or self.side == 3):  # generates random coordinates along side for line, coords are given from 0 to 1 starting from top left
+            self.x = param
+            if (self.side == 3):
                 self.y = 0
             else:
                 self.y = 1
-        if (side == 2 or side == 4):
-            self.y = random.random()
-            if (side == 4):
+        if (self.side == 2 or self.side == 4):
+            self.y = param
+            if (self.side == 4):
                 self.x = 0
             else:
                 self.x = 1
